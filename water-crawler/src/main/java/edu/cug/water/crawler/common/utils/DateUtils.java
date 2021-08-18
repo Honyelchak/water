@@ -16,6 +16,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * 日期处理
@@ -37,6 +38,10 @@ public class DateUtils {
         return format(date, DATE_PATTERN);
     }
 
+    public static String formatDateTime(Date date) {
+        return format(date, DATE_TIME_PATTERN);
+    }
+
     /**
      * 日期格式化 日期格式为：yyyy-MM-dd
      * @param date  日期
@@ -46,6 +51,7 @@ public class DateUtils {
     public static String format(Date date, String pattern) {
         if(date != null){
             SimpleDateFormat df = new SimpleDateFormat(pattern);
+            df.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
             return df.format(date);
         }
         return null;

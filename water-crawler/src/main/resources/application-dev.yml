@@ -16,12 +16,28 @@ spring:
             min-evictable-idle-time-millis: 300000
             #Oracle需要打开注释
             #validation-query: SE多数据源的配置
-
-elastic:
-    search:
-        host-name: 112.124.36.160
-        port: 9200
-#dynamic:
+    elasticsearch:
+        bboss:
+            elasticsearch:
+                rest:
+                    hostNames: 112.124.36.160:9200
+                    dateFormat: yyyy.MM.dd
+                    timeZone: Asia/Shanghai
+                    showTemplate: true
+                    discoverHost: false
+            http:
+                timeoutConnection: 5000
+                timeoutSocket: 5000
+                connectionRequestTimeout: 5000
+                retryTime: 1
+                maxLineLength: -1
+                maxHeaderCount: 200
+                maxTotal: 400
+                defaultMaxPerRoute: 200
+                soReuseAddress: false
+                soKeepAlive: false
+                timeToLive: 3600000
+                keepAlive: 3600000
 #  datasource:
 #    slave1:
 #      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver

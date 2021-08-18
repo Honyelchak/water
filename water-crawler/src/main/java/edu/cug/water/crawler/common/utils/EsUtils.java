@@ -1,53 +1,54 @@
 package edu.cug.water.crawler.common.utils;
 
 
-import edu.cug.water.crawler.common.constant.EsConstants.*;
-import org.apache.http.Header;
-import org.apache.http.HttpHost;
-import org.apache.http.RequestLine;
-import org.apache.http.util.EntityUtils;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.Response;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
+import edu.cug.water.crawler.common.constant.EsConstants.MapperConstants;
+import org.frameworkset.elasticsearch.boot.BBossESStarter;
+import org.frameworkset.elasticsearch.client.ClientInterface;
+import org.frameworkset.elasticsearch.entity.ESDatas;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class EsUtils {
 
     @Autowired
-    private RestHighLevelClient restHighLevelClient;
+    private BBossESStarter bBossESStarter;
 
+    private final static String mapper =  MapperConstants.MAPPER_DIR.getValue() + "/" + MapperConstants.GATEWAY_MAPPER.getValue();
 
-    public boolean insert() throws IOException {
-
-        RestClient lowLevelClient = restHighLevelClient.getLowLevelClient();
-
-        Request request = new Request(RequestMethod.GET.getValue(), "/");
-
-        Response response = lowLevelClient.performRequest(request);
-
-        RequestLine requestLine = response.getRequestLine();
-        HttpHost host = response.getHost();
-        int statusCode = response.getStatusLine().getStatusCode();
-        Header[] headers = response.getHeaders();
-        String responseBody = EntityUtils.toString(response.getEntity());
-        System.out.println(responseBody);
-        return true;
+    /**
+     * addDateDocument() 会将文档添加到"{indexName}-{CurrentDate}"库中。
+     * @param indexName
+     * @param indexType
+     * @param bean
+     * @return
+     * @throws IOException
+     */
+    public String addDateDocument(String indexName, String indexType, Object bean) throws IOException {
+        ClientInterface restClient = bBossESStarter.getConfigRestClient(mapper);
+        return restClient.addDateDocument(indexName, indexType, bean);
     }
 
-    public ResponseEntity getOne(String indexName, String typeName, String id) {
-        Request request = new Request(RequestMethod.GET.getValue(), indexName + "/" + typeName);
-        GetResponse documentFields = restHighLevelClient.get(request);
+    public String addDocument(String indexName, String indexType, Object bean) {
+        ClientInterface restClient = bBossESStarter.getConfigRestClient(mapper);
+        return restClient.addDocument(indexName, indexType, bean);
     }
 
-    public GetResponse getList(@NotNull String indexName, @NotNull String typeName, String id) {
+    public String addDocuments(String indexName, String indexType, List<?>list) {
+        ClientInterface restClient = bBossESStarter.getConfigRestClient(mapper);
+        return restClient.addDocuments(indexName, indexType, list);
+    }
 
+//    public String addMapObject(String indexName, String indexType, List<Map> list) {
+//
+//    }
+
+    public ESDatas<?> searchList(String index, String dslName, Map param, Class<?> cls) {
+        ClientInterface restClient = bBossESStarter.getConfigRestClient(mapper);
+        return restClient.searchList(index + "/search", dslName, param, cls);
     }
 }
